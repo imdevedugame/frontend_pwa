@@ -4,7 +4,7 @@ import './globals.css'
 import BottomNav from '@/components/bottom-nav'
 import { AuthProvider } from '@/context/auth-context'
 import { Inter } from 'next/font/google'
-
+import SwRegister from '@/components/sw-register'
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
 export const metadata: Metadata = {

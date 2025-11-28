@@ -137,7 +137,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-linear-to-b from-[rgb(240,253,244)] to-[rgb(250,250,250)]">
       {/* Header */}
-      <div className="bg-linear-to-r from-[rgb(22,163,74)] to-[rgb(16,134,58)] text-white px-4 py-6 sticky top-0 z-10 shadow-sm">
+      <div className="bg-green-600 text-white px-4 py-6 sticky top-0 z-10 shadow-sm">
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-2xl font-bold">SecondHand</h1>
