@@ -128,7 +128,7 @@ export default function OrdersPage() {
                 <Link
                   key={order.id}
                   href={`/orders/${order.id}`}
-                  className="group bg-white rounded-xl p-5 border border-slate-200 hover:border-emerald-300 hover:shadow-lg transition-all duration-300"
+                  className=""
                 >
                   {/* Top Row */}
                   <div className="flex items-start justify-between gap-4 mb-4">
