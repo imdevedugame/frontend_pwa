@@ -32,6 +32,7 @@ export default function SellerDashboard() {
     totalViews: 0,
     totalEarnings: 0
   })
+  const [deletingId, setDeletingId] = useState<number | null>(null)
 
   useEffect(() => {
     // Tunggu sampai proses load auth selesai agar tidak redirect prematur
@@ -86,20 +87,31 @@ export default function SellerDashboard() {
   }
 
   const handleDeleteProduct = async (productId: number) => {
+    if (!token) {
+      alert('Token tidak tersedia. Silakan login ulang.')
+      return
+    }
     if (!confirm('Yakin ingin menghapus produk ini?')) return
-
+    setDeletingId(productId)
     try {
       const res = await fetch(`${API_BASE_URL}/api/products/${productId}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` }
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
       })
-
       if (res.ok) {
-        setProducts(products.filter(p => p.id !== productId))
-        alert('Produk berhasil dihapus')
+        setProducts(prev => prev.filter(p => p.id !== productId))
+      } else {
+        const err = await res.json().catch(() => ({}))
+        alert(err.message || 'Gagal menghapus produk')
       }
     } catch (error) {
       console.error('Error deleting product:', error)
+      alert('Terjadi kesalahan jaringan')
+    } finally {
+      setDeletingId(null)
     }
   }
 
@@ -222,10 +234,15 @@ export default function SellerDashboard() {
                             <Edit2 size={16} />
                           </Link>
                           <button
-                            onClick={() => handleDeleteProduct(product.id)}
-                            className="p-2 hover:bg-red-100 rounded text-red-600"
+                            onClick={() => deletingId === null && handleDeleteProduct(product.id)}
+                            disabled={deletingId === product.id}
+                            className={`p-2 rounded text-red-600 ${deletingId === product.id ? 'opacity-50 cursor-not-allowed' : 'hover:bg-red-100'}`}
                           >
-                            <Trash2 size={16} />
+                            {deletingId === product.id ? (
+                              <span className="animate-pulse text-xs font-semibold">...</span>
+                            ) : (
+                              <Trash2 size={16} />
+                            )}
                           </button>
                         </div>
                       </td>

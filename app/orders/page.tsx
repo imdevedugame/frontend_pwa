@@ -37,6 +37,7 @@ const statusConfig: Record<string, { icon: any; label: string; color: string; bg
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
+  const [updatingId, setUpdatingId] = useState<number | null>(null)
 
   useEffect(() => {
     fetchOrders()
@@ -56,6 +57,33 @@ export default function OrdersPage() {
       console.error("Error fetching orders:", error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const markReceived = async (orderId: number) => {
+    const token = localStorage.getItem('token')
+    if (!token) return alert('Token tidak ditemukan')
+    setUpdatingId(orderId)
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/orders/${orderId}/status`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ status: 'delivered' })
+      })
+      if (res.ok) {
+        setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: 'delivered' } : o))
+      } else {
+        const err = await res.json().catch(()=>({}))
+        alert(err.message || 'Gagal memperbarui status')
+      }
+    } catch (e) {
+      console.error('Update status error', e)
+      alert('Kesalahan jaringan')
+    } finally {
+      setUpdatingId(null)
     }
   }
 
@@ -165,14 +193,25 @@ export default function OrdersPage() {
                     </div>
                   </div>
 
-                  {/* Items Count */}
+                  {/* Items + Actions */}
                   <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between">
                     <div className="flex items-center gap-2 text-sm text-slate-600">
                       <ShoppingBag size={16} />
-                      {order.items?.length || 0} item{order.items?.length !== 1 ? "s" : ""}
+                      {order.items?.length || 0} item{order.items?.length !== 1 ? 's' : ''}
                     </div>
-                    <div className="text-emerald-600 text-sm font-medium group-hover:translate-x-1 transition-transform">
-                      Lihat Detail →
+                    <div className="flex items-center gap-3">
+                      {order.status === 'shipped' && (
+                        <button
+                          onClick={(e)=>{ e.preventDefault(); e.stopPropagation(); markReceived(order.id) }}
+                          disabled={updatingId === order.id}
+                          className={`px-3 py-1.5 rounded text-xs font-medium border transition-colors ${updatingId === order.id ? 'bg-emerald-200 border-emerald-300 text-emerald-700 cursor-not-allowed' : 'bg-emerald-600 border-emerald-600 text-white hover:bg-emerald-700'}`}
+                        >
+                          {updatingId === order.id ? 'Memproses...' : 'Pesanan sudah diterima'}
+                        </button>
+                      )}
+                      <div className="text-emerald-600 text-sm font-medium group-hover:translate-x-1 transition-transform">
+                        Lihat Detail →
+                      </div>
                     </div>
                   </div>
                 </Link>
