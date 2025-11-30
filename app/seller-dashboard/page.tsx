@@ -134,13 +134,21 @@ export default function SellerDashboard() {
       <div className="bg-gradient-to-r from-[rgb(22,163,74)] to-[rgb(16,134,58)] text-white px-4 py-6">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl font-bold mb-4">Dashboard Penjual</h1>
-          <Link
-            href="/sell"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-white text-[rgb(34,197,94)] rounded-lg font-bold hover:bg-gray-100"
-          >
-            <Plus size={20} />
-            Jual Barang Baru
-          </Link>
+          <div className="flex flex-wrap gap-3">
+            <Link
+              href="/sell"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-white text-[rgb(34,197,94)] rounded-lg font-bold hover:bg-gray-100"
+            >
+              <Plus size={20} />
+              Jual Barang Baru
+            </Link>
+            <Link
+              href="/seller-dashboard/orders"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-white/90 text-white border border-white rounded-lg font-bold hover:bg-white hover:text-[rgb(34,197,94)]"
+            >
+              Kelola Pesanan
+            </Link>
+          </div>
         </div>
       </div>
 
